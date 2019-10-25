@@ -44,43 +44,23 @@ exports.createMultiLineBlock = (str) => {
     return this.createBaseBlock(ret_str);
 }
 
+exports.createIndentedBlock = (str) => {
+    return this.createBaseBlock(`>${str}`);
+}
+
 exports.createMessage = (uid, data) => {
     var ret = {
         form: {
             token: this.AUTH_TOKEN,
             channel: this.CHANNEL_NAME,
             attachments: [],
-            //user: uid,
+            user: uid,
             text: "Jordan is bored.",
             blocks: ""
         }
     }
 
-    // Create title block
-    let title_block = this.createBaseBlock(`*QUESTION: "${data.title}" [Score=${data.question_score}]*\n`);
-
-    // Create content block
-    let content_block = this.createMultiLineBlock(data.content);
-
-    // Create divider block
-    let divider_block = this.createDividerBlock();
-
-    // Create answer title block
-    let answer_title_block = this.createBaseBlock();
-    if(data.is_accepted_ans) {
-        answer_title_block.text.text += `*Best Accepted Answer `;
-    } else {
-        answer_title_block.text.text += `*Best Non-Accepted Answer `;
-    }
-    answer_title_block.text.text += `[Score=${data.answer_score}]:*\n`;
-
-    // Create answer block
-    let answer_block = this.createMultiLineBlock(data.answer);
-
-    // Create link block
-    let link_block = this.createBaseBlock(`Read more here: <${data.href}>`);
-
-    let block_arr = [title_block, content_block, divider_block, answer_title_block, answer_block, link_block];
+    let block_arr = [this.createIndentedBlock(data)];
     ret.form.blocks = JSON.stringify(block_arr);
 
     console.log(ret.form.blocks);
